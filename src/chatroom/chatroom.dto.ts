@@ -76,6 +76,41 @@ export class CreateChatRoomDto {
     })
     readonly hashTag: string;
 
+
+    // onwer
+}
+
+export class MessageDto {
+    
+    @ApiProperty({
+       example: 11,
+    })
+    readonly id: string;
+
+    @ApiProperty({
+        example: 3,
+    })
+    readonly chatRoomId: number
+    
+    @ApiProperty({
+        example: '2021-01-01 00:00:00',
+        description: '채팅 전송 시간',
+    })
+    readonly createdAt: Date;
+
+    @ApiProperty({
+        example: '아이엠 아이언맨',
+        description: '채팅 내용',
+    })
+    readonly text: string;
+}
+
+export class CreateMessageDto {    
+    @ApiProperty({
+        example: '아이엠 아이언맨',
+        description: '채팅 내용',
+    })
+    text: string;
 }
 
 

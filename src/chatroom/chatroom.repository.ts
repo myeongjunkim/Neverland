@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { CustomRepository } from "src/db/typeorm-ex.decorator";
-import { ChatRoom } from "./chatroom.entity";
+import { ChatRoom, Message } from "./chatroom.entity";
 import { Account } from "src/account/account.entity";
 import { CreateChatRoomDto } from "./chatroom.dto";
 
@@ -17,4 +17,18 @@ export class ChatRoomRepository extends Repository<ChatRoom> {
         return chatRoom;
     }
 
+    
+}
+
+@CustomRepository(Message)
+export class MessageRepository extends Repository<Message> {
+    async createMessage(account: Account, chatRoomId:number, text:string): Promise<Message> {
+        const message = this.create({
+            chatRoomId:chatRoomId,
+            text:text,
+            createdAt: new Date()
+        });
+        await this.save(message);
+        return message;
+    }
 }

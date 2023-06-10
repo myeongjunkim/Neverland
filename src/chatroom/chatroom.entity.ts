@@ -21,3 +21,19 @@ export class ChatRoom extends BaseEntity {
     @Column()
     createdAt: Date;
 }
+
+
+@Entity()
+export class Message extends BaseEntity {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    text: string;
+
+    @Column()
+    chatRoomId: number;
+
+    @Column()
+    createdAt: Date;
+}
