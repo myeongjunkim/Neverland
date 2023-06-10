@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { AccountDto } from './account.dto';
+
 
 @Injectable()
 export class AccountService {
     
-    create(): string {
-        return 'This action adds a new account';
+    create(): AccountDto {
+        return new AccountDto()
+    }
+
+    login(): AccountDto {
+        return new AccountDto()
     }
 }
