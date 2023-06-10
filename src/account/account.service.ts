@@ -1,8 +1,9 @@
 import * as bcrypt from 'bcryptjs';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { Account } from './account.entity';
-import { AccountDto, CreateAccountDto, LoginAccountDto, UpdateAccountDto } from './account.dto';
+import { AccountDto, CreateAccountDto, LoginAccountDto, TokenDto, UpdateAccountDto } from './account.dto';
 import { AccountRepository } from './account.repository';
 
 
@@ -11,6 +12,7 @@ export class AccountService {
     constructor(
         @InjectRepository(AccountRepository)
         private accountRepository: AccountRepository,
+        private jwtService: JwtService
     ) {}
 
     async create(createAccountDto: CreateAccountDto): Promise<Account> {
@@ -18,10 +20,16 @@ export class AccountService {
         return account
     }
 
-    async login(loginAccountDto: LoginAccountDto): Promise<Account> {
+    async login(loginAccountDto: LoginAccountDto): Promise<TokenDto> {
         const account = await this.accountRepository.getAccountByEmail(loginAccountDto.email);
         if(account && (await bcrypt.compare(loginAccountDto.password, account.password))) {
-            return account;
+            const payload = { id: account.id, email: account.email };
+            const accessToken = this.jwtService.sign(payload);
+
+            const currentTime = new Date();
+            const expireTime = new Date(currentTime.getTime() + 60 * 60 * 24 * 2 * 1000);
+            return new TokenDto(accessToken, expireTime);
+
         } else {
             throw new UnauthorizedException('login failed')
         }
@@ -37,9 +45,4 @@ export class AccountService {
         return account
     }
 
-
-
-    me(): AccountDto {
-        return new AccountDto(1, "마법사의 돌", "asdf")
-    }
 }

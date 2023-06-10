@@ -40,7 +40,7 @@ export class UpdateAccountDto {
 
 export class LoginAccountDto {
     @ApiProperty({
-        example: 'stone@example.com',
+        example: 'newpassword@example.com',
     })
     readonly email: string;
     @ApiProperty({
@@ -69,7 +69,7 @@ export class AccountDto {
     nickname: string;
     
     @ApiProperty({
-        example: "stone@example.com"
+        example: "newpassword@example.com"
     })
     email: string;
 
@@ -82,4 +82,21 @@ export class AccountDto {
         example: "엘사"
     })
     character?: string;
+}
+
+export class TokenDto {
+    constructor(token: string, expireTime: Date) {
+        this.accessToken = token;
+        this.expireTime = expireTime;
+    }
+
+    @ApiProperty({
+        example: "TOKEN"
+    })
+    accessToken: string;
+
+    @ApiProperty({
+        example: "2023-06-12T15:29:37.039Z"
+    })
+    expireTime: Date;
 }

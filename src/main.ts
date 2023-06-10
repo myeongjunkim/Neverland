@@ -9,6 +9,7 @@ async function bootstrap() {
     .setTitle('Neverland API')
     .setDescription('CMC & UMC HACKATHON 2023')
     .setVersion('1.0')
+    .addBearerAuth( { type: 'http', scheme: 'Bearer', bearerFormat: 'JWT' }, 'access-token')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

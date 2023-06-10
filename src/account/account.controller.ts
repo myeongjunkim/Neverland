@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
-import { AccountService } from './account.service';
+import { Controller, Get, Post, Req, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { AccountDto, CreateAccountDto, LoginAccountDto, UpdateAccountDto } from './account.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { AccountService } from './account.service';
+import { AccountDto, CreateAccountDto, LoginAccountDto, UpdateAccountDto, TokenDto } from './account.dto';
 
 @Controller('account')
 @ApiTags('Account')
@@ -19,27 +20,26 @@ export class AccountController {
         );
     }
 
-    
     @Post('/login')
     @ApiBody({ type: LoginAccountDto })
-    @ApiResponse({ status: 200, description: 'Account has been successfully logged in', type: AccountDto })
+    @ApiResponse({ status: 200, description: 'Account has been successfully logged in', type: TokenDto })
     @ApiOperation({ summary: 'Login' })
-    async loginAccount(@Body() loginAccountDto: LoginAccountDto): Promise<AccountDto> {
-        const account = await this.accountService.login(loginAccountDto);
+    async loginAccount(@Body() loginAccountDto: LoginAccountDto): Promise<TokenDto> {
+        return await this.accountService.login(loginAccountDto);
+    }
+    
+    @Get('/me')
+    @UseGuards(AuthGuard())
+    @ApiResponse({ status: 200, description: 'Account info about myself', type: AccountDto })
+    @ApiOperation({ summary: 'me' })
+    async getAccount(@Req() req): Promise<AccountDto> {
+        const account = await this.accountService.get(req.user.id);
         return new AccountDto(
             account.id, account.nickname, account.email, account.universe, account.character
         );
     }
 
-    @Post('/me')
-    @ApiResponse({ status: 200, description: 'Account info about myself', type: AccountDto })
-    @ApiOperation({ summary: 'me' })
-    getAccount(): AccountDto {
-        return this.accountService.me();
-    }
-    
-    
-    @Get('/:id')
+    @Get('/:id/detail')
     @ApiResponse({ status: 201, description: 'Get Account', type: AccountDto })
     @ApiOperation({ summary: 'get' })
     async getAccountById(@Param('id') id: number): Promise<AccountDto> {
@@ -56,4 +56,8 @@ export class AccountController {
     async updateAccount(@Param('id') id: number, @Body() updateAccountDto: UpdateAccountDto): Promise<AccountDto> {
         return await this.accountService.update(id=id, updateAccountDto=updateAccountDto);
     }
+    
+
+    
+    
 }
