@@ -76,8 +76,6 @@ export class CreateChatRoomDto {
     })
     readonly hashTag: string;
 
-
-    // onwer
 }
 
 export class MessageDto {
