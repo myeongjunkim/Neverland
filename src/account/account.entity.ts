@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { ChatRoom } from "src/chatroom/chatroom.entity";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 
 @Entity()
@@ -21,5 +22,8 @@ export class Account extends BaseEntity {
 
     @Column({ nullable: true })
     character: string;
+
+    @OneToMany(() => ChatRoom, chatRoom => chatRoom.owner, { eager: true })
+    chatRooms: ChatRoom[];
 
 }

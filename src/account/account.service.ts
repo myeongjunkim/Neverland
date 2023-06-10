@@ -3,7 +3,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Account } from './account.entity';
-import { AccountDto, CreateAccountDto, LoginAccountDto, TokenDto, UpdateAccountDto } from './account.dto';
+import { CreateAccountDto, LoginAccountDto, TokenDto, UpdateAccountDto } from './account.dto';
 import { AccountRepository } from './account.repository';
 
 
