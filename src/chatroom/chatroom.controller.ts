@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Req, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { ChatroomService } from './chatroom.service';
-import { ChatRoomDto, CreateChatRoomDto, CreateMessageDto, MessageDto } from './chatroom.dto';
+import {  CreateChatRoomDto, CreateMessageDto } from './chatroom.dto';
 import { GetAccount } from 'src/account/get-user.decorator';
 import { Account } from 'src/account/account.entity';
-import { AuthGuard } from '@nestjs/passport';
-import { Message } from './chatroom.entity';
+import { ChatRoom, Message } from './chatroom.entity';
 
 
 @Controller('chatroom')
@@ -17,31 +17,31 @@ export class ChatroomController {
 
     @Post("/")
     @ApiBody({ type: CreateChatRoomDto })
-    @ApiResponse({ status: 201, description: 'ChatRoom has been successfully created', type: ChatRoomDto })
+    @ApiResponse({ status: 201, description: 'ChatRoom has been successfully created', type: ChatRoom })
     @ApiOperation({ summary: '채팅방을 생성합니다.' })
     async createChatRoom(
         @GetAccount() account: Account,
         @Body() createChatRoomDto: CreateChatRoomDto,
-    ): Promise<ChatRoomDto> {
+    ): Promise<ChatRoom> {
         return await this.chatRoomService.createChatRoom(account, createChatRoomDto);
     } 
 
     @Get("/")
-    @ApiResponse({ status: 201, description: 'Fetch ChatRoom', type: [ChatRoomDto] })
+    @ApiResponse({ status: 201, description: 'Fetch ChatRoom', type: [ChatRoom] })
     @ApiOperation({ summary: '채팅방 목록을 불러옵니다.' })
     async fetchChatRoom(
         @GetAccount() account: Account,
-    ): Promise<ChatRoomDto[]> {
+    ): Promise<ChatRoom[]> {
         return await this.chatRoomService.fetchChatRoom(account);
     }
 
     @Get("/:id")
-    @ApiResponse({ status: 201, description: 'get ChatRoom', type: ChatRoomDto })
+    @ApiResponse({ status: 201, description: 'get ChatRoom', type: ChatRoom })
     @ApiOperation({ summary: '채팅방을 불러옵니다.' })
     async getChatRoom(
         @GetAccount() account: Account,
         @Param('id') chatRoomId: number,
-    ): Promise<ChatRoomDto> {
+    ): Promise<ChatRoom> {
         return await this.chatRoomService.getChatRoom(account, chatRoomId);
     }
     
