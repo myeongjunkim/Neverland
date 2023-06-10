@@ -11,7 +11,7 @@ export class AccountController {
     @Post('/create')
     @ApiBody({ type: CreateAccountDto })
     @ApiResponse({ status: 201, description: 'Account has been successfully created', type: AccountDto })
-    @ApiOperation({ summary: 'Create account' })
+    @ApiOperation({ summary: 'Create' })
     async createAccount(@Body() createAccountDto: CreateAccountDto): Promise<AccountDto> {
         const account = await this.accountService.create(createAccountDto);
         return new AccountDto(
@@ -23,14 +23,17 @@ export class AccountController {
     @Post('/login')
     @ApiBody({ type: LoginAccountDto })
     @ApiResponse({ status: 200, description: 'Account has been successfully logged in', type: AccountDto })
-    @ApiOperation({ summary: 'Login to account' })
-    loginAccount(@Body() loginAccountDto: LoginAccountDto): AccountDto {
-        return this.accountService.login();
+    @ApiOperation({ summary: 'Login' })
+    async loginAccount(@Body() loginAccountDto: LoginAccountDto): Promise<AccountDto> {
+        const account = await this.accountService.login(loginAccountDto);
+        return new AccountDto(
+            account.id, account.nickname, account.email, account.universe, account.character
+        );
     }
 
     @Post('/me')
     @ApiResponse({ status: 200, description: 'Account info about myself', type: AccountDto })
-    @ApiOperation({ summary: 'Get account myself' })
+    @ApiOperation({ summary: 'me' })
     getAccount(): AccountDto {
         return this.accountService.me();
     }
@@ -38,7 +41,7 @@ export class AccountController {
     
     @Get('/:id')
     @ApiResponse({ status: 201, description: 'Get Account', type: AccountDto })
-    @ApiOperation({ summary: 'Get account' })
+    @ApiOperation({ summary: 'get' })
     async getAccountById(@Param('id') id: number): Promise<AccountDto> {
         const account = await this.accountService.get(id);
         return new AccountDto(
@@ -49,7 +52,7 @@ export class AccountController {
     @Post('/:id/update')
     @ApiBody({ type: UpdateAccountDto })
     @ApiResponse({ status: 201, description: 'Account has been successfully updated', type: AccountDto })
-    @ApiOperation({ summary: 'Update account' })
+    @ApiOperation({ summary: 'Update' })
     async updateAccount(@Param('id') id: number, @Body() updateAccountDto: UpdateAccountDto): Promise<AccountDto> {
         return await this.accountService.update(id=id, updateAccountDto=updateAccountDto);
     }

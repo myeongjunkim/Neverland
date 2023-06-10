@@ -26,7 +26,7 @@ export class AccountRepository extends Repository<Account> {
         }
     }
 
-    async getAccount(id: number): Promise<Account> {
+    async getAccountById(id: number): Promise<Account> {
         const account = await this.findOneBy({id: id})
         if(account) {
             return account;
@@ -35,8 +35,17 @@ export class AccountRepository extends Repository<Account> {
         }
     }
 
+    async getAccountByEmail(email: string): Promise<Account> {
+        const account = await this.findOneBy({email: email})
+        if(account) {
+            return account;
+        } else {
+            throw new NotFoundException(`Can't find account with id ${email}`);
+        }
+    }
+
     async updateAccount(id:number, updateAccountDto: UpdateAccountDto ): Promise<Account> {
-        let account = await this.getAccount(id);
+        let account = await this.getAccountById(id);
         account.nickname = updateAccountDto.nickname;
         account.universe = updateAccountDto.universe;
         account.character = updateAccountDto.character;
