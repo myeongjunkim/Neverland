@@ -1,8 +1,10 @@
 import { Controller, Get, Post, Req, Body, Param, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { AccountService } from './account.service';
 import { AccountDto, CreateAccountDto, LoginAccountDto, UpdateAccountDto, TokenDto } from './account.dto';
+import { Account } from './account.entity';
+import { GetAccount } from './get-user.decorator';
 
 @Controller('account')
 @ApiTags('Account')
@@ -29,14 +31,23 @@ export class AccountController {
     }
     
     @Get('/me')
+    @ApiBearerAuth('JWT')
     @UseGuards(AuthGuard())
     @ApiResponse({ status: 200, description: 'Account info about myself', type: AccountDto })
     @ApiOperation({ summary: 'me' })
-    async getAccount(@Req() req): Promise<AccountDto> {
-        const account = await this.accountService.get(req.user.id);
-        return new AccountDto(
-            account.id, account.nickname, account.email, account.universe, account.character
-        );
+    getAccount(@GetAccount() account: Account): AccountDto {
+        return account
+    }
+    
+    @Post('/update')
+    @ApiBearerAuth('JWT')
+    @UseGuards(AuthGuard())
+    @ApiBody({ type: UpdateAccountDto })
+    @ApiResponse({ status: 201, description: 'Account has been successfully updated', type: AccountDto })
+    @ApiOperation({ summary: 'Update' })
+    async updateAccount(@GetAccount() account: Account, @Body() updateAccountDto: UpdateAccountDto): Promise<AccountDto> {
+        const updatedAccount = await this.accountService.update(account.id, updateAccountDto);
+        return updatedAccount
     }
 
     @Get('/:id/detail')
@@ -44,18 +55,9 @@ export class AccountController {
     @ApiOperation({ summary: 'get' })
     async getAccountById(@Param('id') id: number): Promise<AccountDto> {
         const account = await this.accountService.get(id);
-        return new AccountDto(
-            account.id, account.nickname, account.email, account.universe, account.character
-        );
+        return account
     }
 
-    @Post('/:id/update')
-    @ApiBody({ type: UpdateAccountDto })
-    @ApiResponse({ status: 201, description: 'Account has been successfully updated', type: AccountDto })
-    @ApiOperation({ summary: 'Update' })
-    async updateAccount(@Param('id') id: number, @Body() updateAccountDto: UpdateAccountDto): Promise<AccountDto> {
-        return await this.accountService.update(id=id, updateAccountDto=updateAccountDto);
-    }
     
 
     

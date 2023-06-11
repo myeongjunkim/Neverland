@@ -41,8 +41,8 @@ export class AccountService {
     }
 
     async update(id: number, updateAccountDto: UpdateAccountDto): Promise<Account> {
-        const account = await this.accountRepository.updateAccount(id, updateAccountDto)
-        return account
+        const updateAccount = await this.accountRepository.updateAccount(id, updateAccountDto)
+        return updateAccount
     }
 
 }
